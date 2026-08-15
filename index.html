@@ -1,156 +1,223 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proje Başarı Paneli | Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background-color: #0f172a; color: white; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .custom-shadow { box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Özür Dilerim ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Comfortaa', cursive, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ffeef0 0%, #fedfe5 100%);
+      color: #5a4a52;
+      overflow-x: hidden;
+    }
+
+    .scroll-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      margin: 40px 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(254, 182, 195, 0.3);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+      color: #d85a7f;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 500;
+    }
+
+    .hint {
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: #9c8a93;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* Final Butonları */
+    .buttons-container {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+      position: relative;
+      width: 100%;
+      justify-content: center;
+      min-height: 60px;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    .btn-yes {
+      background: #ff6b8b;
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 107, 139, 0.4);
+    }
+
+    .btn-yes:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-no {
+      background: #e2d9dc;
+      color: #6d6267;
+      position: absolute;
+      transition: all 0.2s ease;
+    }
+
+    #success-message {
+      display: none;
+      font-size: 1.3rem;
+      color: #d85a7f;
+      margin-top: 20px;
+      animation: pop 0.4s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
 
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-8 flex justify-between items-end">
-            <div>
-                <h1 class="text-3xl font-bold text-sky-400">Verimlilik Analizi</h1>
-                <p class="text-slate-400">Görevlerini tamamla, istatistiklerini yükselt.</p>
-            </div>
-            <div class="text-right">
-                <span class="text-sm text-slate-400">Genel Başarı</span>
-                <div class="text-2xl font-mono font-bold text-green-400" id="totalPercentage">0%</div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-1 space-y-6">
-                <div class="glass p-6 rounded-2xl custom-shadow">
-                    <h2 class="text-xl font-semibold mb-4 text-sky-300">Yeni Görev</h2>
-                    <div class="flex flex-col gap-3">
-                        <input type="text" id="taskInput" placeholder="Görev adını yazın..." class="bg-slate-800 border border-slate-700 p-3 rounded-lg focus:outline-none focus:border-sky-500 text-white">
-                        <button onclick="addTask()" class="bg-sky-600 hover:bg-sky-500 transition p-3 rounded-lg font-bold">Ekle</button>
-                    </div>
-                </div>
-
-                <div class="glass p-6 rounded-2xl">
-                    <h2 class="text-xl font-semibold mb-4">Görev Listesi</h2>
-                    <ul id="taskList" class="space-y-3">
-                        </ul>
-                </div>
-            </div>
-
-            <div class="lg:col-span-2 space-y-6">
-                <div class="glass p-6 rounded-2xl min-h-[400px] flex flex-col items-center justify-center">
-                    <h2 class="text-xl font-semibold mb-6 text-center w-full text-slate-200">Haftalık Performans Grafiği</h2>
-                    <canvas id="successChart"></canvas>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="glass p-4 rounded-xl text-center">
-                        <p class="text-slate-400 text-sm">Tamamlanan</p>
-                        <p id="completedCount" class="text-2xl font-bold text-green-400">0</p>
-                    </div>
-                    <div class="glass p-4 rounded-xl text-center">
-                        <p class="text-slate-400 text-sm">Bekleyen</p>
-                        <p id="pendingCount" class="text-2xl font-bold text-amber-400">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="scroll-container">
+    
+    <!-- Giriş -->
+    <div class="card visible">
+      <img src="https://media.giphy.com/media/ISOckXUybVfQ4/giphy.gif" alt="Üzgün kedi">
+      <h2>Sana küçük bir itirafım var...</h2>
+      <p>Biliyorum, bazen gerçekten kafamı çalıştırmakta zorlanıyorum. Aşağı kaydır da kendi salaklıklarımla yüzleşeyim.</p>
+      <div class="hint">👇 Aşağı kaydır</div>
     </div>
 
-    <script>
-        let tasks = [];
-        let myChart;
+    <!-- Salaklık 1 -->
+    <div class="card">
+      <img src="https://media.giphy.com/media/L95W4wv8nnb9K/giphy.gif" alt="Ağlayan kedi">
+      <h2>1. Düşünmeden konuşma uzmanıyım</h2>
+      <p>Aklıma gelen ilk şeyi tartmadan söyleyip sonra "Ben ne dedim az önce..." diye pişman olma katsayım %1000.</p>
+    </div>
 
-        // Grafik Başlatma
-        const ctx = document.getElementById('successChart').getContext('2d');
-        myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
-                datasets: [{
-                    label: 'Başarı Oranı %',
-                    data: [0, 0, 0, 0, 0, 0, 0], // Burası dinamikleşecek
-                    borderColor: '#38bdf8',
-                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true, max: 100, grid: { color: '#334155' } },
-                    x: { grid: { display: false } }
-                },
-                plugins: { legend: { display: false } }
-            }
-        });
+    <!-- Salaklık 2 -->
+    <div class="card">
+      <img src="https://media.giphy.com/media/3o7TKr3nzbh5WgCFxe/giphy.gif" alt="Şaşkın kedi">
+      <h2>2. Dünyanın en gereksiz inadı bende</h2>
+      <p>Haksız olduğumu fark ettiğim an bile bazen toparlayamayacak kadar şapşallaşıyorum. Ama kalbim her zaman sende.</p>
+    </div>
 
-        function addTask() {
-            const input = document.getElementById('taskInput');
-            if (input.value.trim() === "") return;
+    <!-- Salaklık 3 -->
+    <div class="card">
+      <img src="https://media.giphy.com/media/OPU6wzx8JrHna/giphy.gif" alt="Duygusal kedi">
+      <h2>3. Sensiz kafam hiç basmıyor</h2>
+      <p>Seni kırdığımda dünya üzerindeki en mutsuz ve çaresiz insana dönüşüyorum. Sensiz her şey çok tatsız.</p>
+    </div>
 
-            const newTask = {
-                id: Date.now(),
-                text: input.value,
-                completed: false
-            };
+    <!-- Final Bölümü -->
+    <div class="card" id="final-card">
+      <img id="final-img" src="https://media.giphy.com/media/cMso9wDwqSy3e/giphy.gif" alt="Yalvaran kedi">
+      <h2>Bu salak sevgilini affeder misin? 🥺</h2>
+      <p>Söz veriyorum bir daha seni üzmemek için tüm antenlerimi açık tutacağım!</p>
+      
+      <div class="buttons-container">
+        <button class="btn btn-yes" onclick="affet()">Evet 💕</button>
+        <button class="btn btn-no" id="no-btn" onmouseover="kac()" onclick="kac()">Hayır 😾</button>
+      </div>
 
-            tasks.push(newTask);
-            input.value = "";
-            renderTasks();
-            updateStats();
+      <div id="success-message">
+        YAAŞASIN! Dünyanın en tatlı sevgilisisin, seni çok seviyorum! 💖✨
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Scroll ile kartların belirmesi
+    const cards = document.querySelectorAll('.card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
         }
+      });
+    }, { threshold: 0.3 });
 
-        function toggleTask(id) {
-            tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
-            renderTasks();
-            updateStats();
-        }
+    cards.forEach(card => observer.observe(card));
 
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            renderTasks();
-            updateStats();
-        }
+    // Hayır butonunu kaçırma mekaniği
+    const noBtn = document.getElementById('no-btn');
+    function kac() {
+      const container = document.querySelector('.buttons-container');
+      const maxX = 120;
+      const maxY = 60;
+      
+      const randomX = (Math.random() - 0.5) * (maxX * 2);
+      const randomY = (Math.random() - 0.5) * (maxY * 2);
+      
+      noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    }
 
-        function renderTasks() {
-            const list = document.getElementById('taskList');
-            list.innerHTML = "";
-            tasks.forEach(task => {
-                list.innerHTML += `
-                    <li class="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-slate-700 transition hover:border-slate-500">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" onchange="toggleTask(${task.id})" ${task.completed ? 'checked' : ''} class="w-5 h-5 accent-sky-500">
-                            <span class="${task.completed ? 'line-through text-slate-500' : 'text-slate-200'}">${task.text}</span>
-                        </div>
-                        <button onclick="deleteTask(${task.id})" class="text-red-400 hover:text-red-600 text-sm">Sil</button>
-                    </li>
-                `;
-            });
-        }
-
-        function updateStats() {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.completed).length;
-            const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-            document.getElementById('totalPercentage').innerText = percentage + "%";
-            document.getElementById('completedCount').innerText = completed;
-            document.getElementById('pendingCount').innerText = total - completed;
-
-            // Grafiği simülasyon olarak bugüne güncelle (Örn: Bugün Cuma olsun)
-            myChart.data.datasets[0].data[4] = percentage; 
-            myChart.update();
-        }
-    </script>
+    // Evet butonuna tıklanınca
+    function affet() {
+      document.getElementById('no-btn').style.display = 'none';
+      document.querySelector('.btn-yes').style.display = 'none';
+      document.getElementById('final-img').src = 'https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif';
+      document.getElementById('success-message').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
